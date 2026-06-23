@@ -811,6 +811,9 @@
       ];
       return shuffle(pool);  // 整体再洗一次
     }
+    function getTotal() {
+      return state.mode === 'exam' ? state.examPool.length : state.order.length;
+    }
 
     // ====== View Switching ======
     function showView(name) {
@@ -979,11 +982,11 @@
 
       // 按钮变成 "下一题"
       $('btn-submit').disabled = false;
-      $('btn-submit').textContent = state.current === state.order.length - 1 ? '查看结果' : '下一题 →';
+      $('btn-submit').textContent = state.current === getTotal() - 1 ? '查看结果' : '下一题 →';
     }
 
     function nextQuestion() {
-      if (state.current >= state.order.length - 1) {
+      if (state.current >= getTotal() - 1) {
         showResult();
         return;
       }
