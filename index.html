@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#020203">
+  <title>刷题先锋 1.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ========== Design Tokens ========== */
+    :root {
+      --bg-deep: #020203;
+      --bg-base: #050506;
+      --bg-elevated: #0a0a0c;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.08);
+      --surface-active: rgba(94, 106, 210, 0.12);
+      --foreground: #EDEDEF;
+      --foreground-muted: #8A8F98;
+      --foreground-dim: #5A5F68;
+      --accent: #5E6AD2;
+      --accent-strong: #7383E0;
+      --accent-glow: rgba(94, 106, 210, 0.25);
+      --cyan: #00FFFF;
+      --cyan-glow: rgba(0, 255, 255, 0.18);
+      --success: #10B981;
+      --success-glow: rgba(16, 185, 129, 0.25);
+      --error: #EF4444;
+      --error-glow: rgba(239, 68, 68, 0.25);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.18);
+      --radius: 16px;
+      --radius-sm: 12px;
+      --radius-lg: 22px;
+      --easing: cubic-bezier(0.16, 1, 0.3, 1);
+      --transition: 250ms var(--easing);
+      --transition-slow: 400ms var(--easing);
+    }
+
+    /* ========== Reset ========== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--foreground);
+      background: var(--bg-deep);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    button:disabled { cursor: not-allowed; }
+
+    /* ========== Background Layer ========== */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: linear-gradient(180deg, #0a0a0f 0%, #020203 100%);
+      z-index: -2;
+    }
+    .bg-blobs { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.15;
+      will-change: transform;
+    }
+    .blob-1 {
+      width: 320px; height: 320px;
+      background: var(--accent);
+      top: -80px; left: -80px;
+      animation: float1 18s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 280px; height: 280px;
+      background: var(--cyan);
+      bottom: -60px; right: -60px;
+      animation: float2 22s ease-in-out infinite;
+    }
+    .blob-3 {
+      width: 220px; height: 220px;
+      background: #8B5CF6;
+      top: 40%; right: 10%;
+      animation: float3 25s ease-in-out infinite;
+      opacity: 0.10;
+    }
+    @keyframes float1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, 60px) scale(1.1); }
+      66% { transform: translate(-30px, 30px) scale(0.95); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-50px, -40px) scale(1.15); }
+      66% { transform: translate(20px, -60px) scale(0.9); }
+    }
+    @keyframes float3 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-40px, 50px); }
+    }
+
+    /* ========== Layout ========== */
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 0 20px;
+      padding-top: env(safe-area-inset-top, 0);
+      padding-bottom: calc(20px + env(safe-area-inset-bottom, 0));
+      display: flex;
+      flex-direction: column;
+    }
+    .view {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      animation: fadeIn 350ms var(--easing);
+    }
+    .view.hidden { display: none; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== Home View ========== */
+    .home {
+      justify-content: center;
+      align-items: stretch;
+      gap: 32px;
+      padding-top: 60px;
+    }
+    .brand {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .logo {
+      width: 72px; height: 72px;
+      margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+      background: linear-gradient(135deg, var(--accent) 0%, #8B5CF6 100%);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 32px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+      position: relative;
+    }
+    .logo::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .brand h1 {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #B8BCC8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .version {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--foreground-muted);
+      letter-spacing: 1px;
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .tab {
+      padding: 18px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--foreground-muted);
+      font-size: 15px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .tab .count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--foreground-dim);
+      transition: var(--transition);
+    }
+    .tab.active {
+      background: var(--surface-active);
+      border-color: var(--accent);
+      color: var(--foreground);
+      box-shadow: 0 0 0 1px var(--accent), 0 4px 16px var(--accent-glow);
+    }
+    .tab.active .count { color: var(--cyan); }
+    .tab:active { transform: scale(0.97); }
+
+    /* ========== Buttons ========== */
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: var(--transition);
+      min-height: 52px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, #7383E0 100%);
+      color: #FFFFFF;
+      box-shadow: 0 4px 16px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+    .btn-primary:disabled {
+      background: var(--surface);
+      color: var(--foreground-dim);
+      box-shadow: none;
+    }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:active { transform: scale(0.98); background: var(--surface-hover); }
+
+    .hint {
+      text-align: center;
+      font-size: 13px;
+      color: var(--foreground-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .signature {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.8px;
+      color: var(--foreground-dim);
+      margin-top: -8px;
+    }
+    .signature .author {
+      color: var(--cyan);
+      font-weight: 700;
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+    .signature .sep {
+      opacity: 0.4;
+      margin: 0 6px;
+    }
+
+    /* ========== Quiz View ========== */
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 12px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000000;
+      background: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transition: var(--transition);
+    }
+    .btn-back:active { transform: scale(0.97); background: #EAEAEA; }
+    .progress-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--foreground-muted);
+      font-weight: 500;
+    }
+    .progress-text .current { color: var(--cyan); font-weight: 700; }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--surface);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--cyan) 100%);
+      width: 0%;
+      transition: width 350ms var(--easing);
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .question-card {
+      flex: 1;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px 22px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      position: relative;
+      animation: slideIn 350ms var(--easing);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .q-type {
+      display: inline-block;
+      padding: 4px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      background: rgba(0, 255, 255, 0.08);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    .q-type.multi { color: #FF9F43; background: rgba(255, 159, 67, 0.08); border-color: rgba(255, 159, 67, 0.2); }
+    .q-text {
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.65;
+      margin-bottom: 24px;
+      color: var(--foreground);
+      word-wrap: break-word;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 52px;
+      text-align: left;
+      width: 100%;
+    }
+    .option:active:not(.locked) { transform: scale(0.98); }
+    .option .key {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--foreground-muted);
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+    .option .text {
+      flex: 1;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--foreground);
+      padding-top: 3px;
+      word-wrap: break-word;
+    }
+
+    /* 选中态 */
+    .option.selected {
+      background: var(--surface-active);
+      border-color: var(--accent);
+    }
+    .option.selected .key {
+      background: var(--accent);
+      color: #FFFFFF;
+      border-color: var(--accent);
+    }
+
+    /* 锁定后展示（对错判定） */
+    .option.locked { cursor: default; }
+    .option.correct {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: var(--success);
+      box-shadow: 0 0 0 1px var(--success), 0 4px 16px var(--success-glow);
+    }
+    .option.correct .key {
+      background: var(--success);
+      color: #FFFFFF;
+      border-color: var(--success);
+    }
+    .option.wrong {
+      background: rgba(239, 68, 68, 0.10);
+      border-color: var(--error);
+      box-shadow: 0 0 0 1px var(--error), 0 4px 12px var(--error-glow);
+    }
+    .option.wrong .key {
+      background: var(--error);
+      color: #FFFFFF;
+      border-color: var(--error);
+    }
+    .option.dimmed { opacity: 0.4; }
+
+    .quiz-footer {
+      padding-top: 20px;
+    }
+
+    /* ========== Feedback Bar (inline) ========== */
+    .feedback {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      animation: feedbackIn 250ms var(--easing);
+    }
+    .feedback.hidden { display: none; }
+    .feedback.correct {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid var(--success);
+      color: var(--success);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.4), 0 4px 16px var(--success-glow);
+    }
+    .feedback.wrong {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid var(--error);
+      color: var(--error);
+      box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.4), 0 4px 16px var(--error-glow);
+    }
+    .feedback .answer-hint {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--foreground-muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+    @keyframes feedbackIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== Result View ========== */
+    .result {
+      justify-content: center;
+      align-items: stretch;
+      gap: 28px;
+    }
+    .result-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .result-icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .result-card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .stat-item {
+      padding: 16px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .stat-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--foreground-muted);
+      letter-spacing: 1px;
+    }
+    .stat-correct .stat-num { color: var(--success); }
+    .stat-wrong .stat-num { color: var(--error); }
+    .stat-rate .stat-num { color: var(--cyan); }
+
+    .result-comment {
+      font-size: 14px;
+      color: var(--foreground-muted);
+      margin-bottom: 24px;
+      min-height: 20px;
+      position: relative;
+    }
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      position: relative;
+    }
+    .result-actions button { flex: 1; }
+
+    /* ========== Responsive ========== */
+    @media (min-width: 520px) {
+      .app { padding: 0 28px; }
+    }
+    @media (max-height: 700px) {
+      .home { padding-top: 24px; gap: 24px; }
+      .logo { width: 60px; height: 60px; font-size: 32px; margin-bottom: 12px; }
+      .brand h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="app">
+    <!-- ========== Home View ========== -->
+    <main id="view-home" class="view home">
+      <div class="brand">
+        <div class="logo">⚡</div>
+        <h1>刷题先锋</h1>
+        <p class="version">v1.0 · DARK · TECH</p>
+      </div>
+
+      <div class="mode-tabs" id="mode-tabs">
+        <button class="tab active" data-mode="single">
+          <span>单选题</span>
+          <span class="count" id="count-single">350</span>
+        </button>
+        <button class="tab" data-mode="multi">
+          <span>多选题</span>
+          <span class="count" id="count-multi">350</span>
+        </button>
+      </div>
+
+      <button id="btn-start" class="btn-primary">开始挑战</button>
+      <p class="hint">// 每轮随机洗牌 · 答完看正确率</p>
+      <p class="signature">
+        <span class="author">钱小虾</span><span class="sep">·</span>build by <span class="author">OpenClaw</span>
+      </p>
+    </main>
+
+    <!-- ========== Quiz View ========== -->
+    <main id="view-quiz" class="view hidden">
+      <header class="quiz-header">
+        <button class="btn-back" id="btn-back">← 退出</button>
+        <div class="progress-text">
+          <span class="current" id="progress-current">01</span> / <span id="progress-total">350</span>
+        </div>
+      </header>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <article class="question-card" id="question-card">
+        <span class="q-type" id="q-type">单选题</span>
+        <h2 class="q-text" id="q-text"></h2>
+        <div class="options" id="options"></div>
+      </article>
+
+      <div class="quiz-footer">
+        <div id="feedback" class="feedback hidden"></div>
+        <button id="btn-submit" class="btn-primary" disabled>提交答案</button>
+      </div>
+    </main>
+
+    <!-- ========== Result View ========== -->
+    <main id="view-result" class="view hidden result">
+      <div class="result-card">
+        <div class="result-icon" id="result-icon">🎯</div>
+        <h2>本轮挑战完成</h2>
+
+        <div class="result-stats">
+          <div class="stat-item stat-correct">
+            <div class="stat-num" id="r-correct">0</div>
+            <div class="stat-label">答对</div>
+          </div>
+          <div class="stat-item stat-wrong">
+            <div class="stat-num" id="r-wrong">0</div>
+            <div class="stat-label">答错</div>
+          </div>
+          <div class="stat-item stat-rate">
+            <div class="stat-num" id="r-rate">0%</div>
+            <div class="stat-label">正确率</div>
+          </div>
+        </div>
+
+        <p class="result-comment" id="r-comment"></p>
+
+        <div class="result-actions">
+          <button class="btn-secondary" id="btn-home">返回首页</button>
+          <button class="btn-primary" id="btn-restart">再来一轮</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="questions.js"></script>
+  <script>
+    'use strict';
+
+    // ====== State ======
+    const state = {
+      mode: 'single',          // 'single' | 'multi'
+      order: [],               // 题目 id 数组
+      current: 0,              // 当前题目索引
+      results: [],             // 每题结果 {selected, correct, correctAns}
+      locked: false,           // 当前题是否已提交锁定
+      currentSelected: new Set(),
+    };
+
+    const BANK = window.QUESTION_BANK;
+    if (!BANK) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#EF4444;font-family:monospace;">⚠ 题库加载失败，请检查 questions.js 是否就位</div>';
+      throw new Error('QUESTION_BANK missing');
+    }
+
+    const KEYS = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+    // ====== Utilities ======
+    const $ = (id) => document.getElementById(id);
+    const shuffle = (arr) => {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    const fmt2 = (n) => String(n).padStart(2, '0');
+
+    function getPool() {
+      return state.mode === 'single' ? BANK.single : BANK.multi;
+    }
+    function getQuestion(idx) {
+      return getPool().find(q => q.id === state.order[idx]);
+    }
+
+    // ====== View Switching ======
+    function showView(name) {
+      ['home', 'quiz', 'result'].forEach(v => {
+        $(`view-${v}`).classList.toggle('hidden', v !== name);
+      });
+    }
+
+    // ====== Home View ======
+    function initHome() {
+      $('count-single').textContent = BANK.meta.singleCount;
+      $('count-multi').textContent = BANK.meta.multiCount;
+
+      $('mode-tabs').addEventListener('click', (e) => {
+        const tab = e.target.closest('.tab');
+        if (!tab) return;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        state.mode = tab.dataset.mode;
+      });
+
+      $('btn-start').addEventListener('click', startQuiz);
+    }
+
+    // ====== Quiz View ======
+    function startQuiz() {
+      const pool = getPool();
+      state.order = shuffle(pool.map(q => q.id));
+      state.current = 0;
+      state.results = new Array(state.order.length).fill(null);
+      state.locked = false;
+      state.currentSelected = new Set();
+
+      $('progress-total').textContent = state.order.length;
+      $('q-type').textContent = state.mode === 'single' ? '单选题' : '多选题';
+      $('q-type').classList.toggle('multi', state.mode === 'multi');
+
+      showView('quiz');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = getQuestion(state.current);
+      if (!q) return;
+
+      state.currentSelected = new Set();
+      state.locked = false;
+
+      $('progress-current').textContent = fmt2(state.current + 1);
+      $('progress-fill').style.width = `${(state.current / state.order.length) * 100}%`;
+
+      $('q-text').textContent = q.q;
+      $('btn-submit').disabled = true;
+      $('btn-submit').textContent = '提交答案';
+      hideFeedback();
+
+      const optsEl = $('options');
+      optsEl.innerHTML = '';
+      q.opts.forEach((text, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.dataset.key = KEYS[i];
+        btn.innerHTML = `
+          <span class="key">${KEYS[i]}</span>
+          <span class="text">${escapeHtml(text)}</span>
+        `;
+        btn.addEventListener('click', () => onOptionClick(KEYS[i], btn));
+        optsEl.appendChild(btn);
+      });
+
+      // 触发卡片淡入动画
+      const card = $('question-card');
+      card.style.animation = 'none';
+      card.offsetHeight; // reflow
+      card.style.animation = '';
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function onOptionClick(key, btn) {
+      if (state.locked) return;
+      if (state.mode === 'single') {
+        // 单选：清空其他选中
+        state.currentSelected = new Set([key]);
+        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        btn.classList.add('selected');
+      } else {
+        // 多选：toggle
+        if (state.currentSelected.has(key)) {
+          state.currentSelected.delete(key);
+          btn.classList.remove('selected');
+        } else {
+          state.currentSelected.add(key);
+          btn.classList.add('selected');
+        }
+      }
+      $('btn-submit').disabled = state.currentSelected.size === 0;
+    }
+
+    function onSubmit() {
+      if (state.locked) {
+        // 已是锁定态，按钮变 "下一题"
+        nextQuestion();
+        return;
+      }
+      const q = getQuestion(state.current);
+      const selected = Array.from(state.currentSelected).sort();
+      const correctAns = q.ans.slice().sort();
+      const isCorrect = selected.length === correctAns.length &&
+        selected.every((v, i) => v === correctAns[i]);
+
+      state.results[state.current] = { selected, correct: isCorrect, correctAns };
+      state.locked = true;
+
+      // 视觉反馈：标对错 + 锁定
+      document.querySelectorAll('.option').forEach(o => {
+        o.classList.add('locked');
+        const k = o.dataset.key;
+        if (correctAns.includes(k)) {
+          o.classList.add('correct');
+        } else if (state.currentSelected.has(k)) {
+          o.classList.add('wrong');
+        } else {
+          o.classList.add('dimmed');
+        }
+      });
+
+      // 反馈条
+      showFeedback(isCorrect, correctAns, q.opts);
+
+      // 按钮变成 "下一题"
+      $('btn-submit').disabled = false;
+      $('btn-submit').textContent = state.current === state.order.length - 1 ? '查看结果' : '下一题 →';
+    }
+
+    function nextQuestion() {
+      if (state.current >= state.order.length - 1) {
+        showResult();
+        return;
+      }
+      state.current++;
+      renderQuestion();
+    }
+
+    // ====== Feedback Bar ======
+    function showFeedback(isCorrect, correctAns, opts) {
+      const f = $('feedback');
+      f.className = 'feedback ' + (isCorrect ? 'correct' : 'wrong');
+      const answerTexts = correctAns.map(k => {
+        const idx = KEYS.indexOf(k);
+        return `${k}. ${opts[idx] || ''}`;
+      }).join('  ·  ');
+      f.innerHTML = isCorrect
+        ? '✓ 答对了'
+        : `✗ 答错了<span class="answer-hint">正确答案：${escapeHtml(answerTexts)}</span>`;
+    }
+    function hideFeedback() {
+      const f = $('feedback');
+      f.classList.add('hidden');
+      f.innerHTML = '';
+    }
+
+    // ====== Result View ======
+    function showResult() {
+      const total = state.results.length;
+      const correct = state.results.filter(r => r && r.correct).length;
+      const wrong = total - correct;
+      const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+      $('r-correct').textContent = correct;
+      $('r-wrong').textContent = wrong;
+      $('r-rate').textContent = rate + '%';
+
+      $('result-icon').textContent = rate >= 90 ? '🏆' : rate >= 70 ? '🎯' : rate >= 50 ? '💪' : '📚';
+      $('r-comment').textContent = rate >= 90
+        ? '太卷了，电厂都给你颁锦旗 ⚡'
+        : rate >= 70
+        ? '基础扎实，再来一轮向 90% 冲'
+        : rate >= 50
+        ? '还有进步空间，建议错题回炉'
+        : '稳住别慌，错题就是提分点';
+
+      $('progress-fill').style.width = '100%';
+      showView('result');
+    }
+
+    // ====== Event Listeners ======
+    function initQuiz() {
+      $('btn-back').addEventListener('click', () => {
+        if (confirm('确定退出本轮挑战？进度将不保留。')) {
+          showView('home');
+        }
+      });
+      $('btn-submit').addEventListener('click', onSubmit);
+    }
+
+    function initResult() {
+      $('btn-home').addEventListener('click', () => {
+        showView('home');
+      });
+      $('btn-restart').addEventListener('click', () => {
+        startQuiz();
+      });
+    }
+
+    // ====== Boot ======
+    document.addEventListener('DOMContentLoaded', () => {
+      initHome();
+      initQuiz();
+      initResult();
+    });
+  </script>
+</body>
+</html>
