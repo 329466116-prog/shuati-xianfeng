@@ -342,6 +342,179 @@
     }
     .btn-exam:hover .exam-arrow { color: #FFB874; transform: translateX(2px); }
 
+    /* ========== Wrong Training Button ========== */
+    .btn-wrong {
+      width: 100%;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.10) 0%, rgba(255, 159, 67, 0.10) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.30);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-align: left;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-wrong:active { transform: scale(0.98); }
+    .wrong-icon {
+      flex-shrink: 0;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 12px;
+    }
+    .wrong-text { flex: 1; }
+    .wrong-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--foreground);
+      margin-bottom: 2px;
+    }
+    .wrong-desc {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #FF9F8A;
+      letter-spacing: 0.5px;
+    }
+    .wrong-desc #wrong-count {
+      color: var(--cyan);
+      font-weight: 700;
+      text-shadow: 0 0 6px var(--cyan-glow);
+    }
+    .wrong-arrow {
+      flex-shrink: 0;
+      font-size: 20px;
+      color: var(--foreground-dim);
+      transition: var(--transition);
+    }
+    .btn-wrong:hover .wrong-arrow { color: #FF9F8A; transform: translateX(2px); }
+
+    /* ========== Text Link Button ========== */
+    .btn-text-link {
+      margin-top: 4px;
+      padding: 8px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--foreground-dim);
+      letter-spacing: 1px;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+    .btn-text-link:hover { color: var(--foreground); background: var(--surface); }
+
+    /* ========== Settings View ========== */
+    .settings-content {
+      flex: 1;
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .settings-section {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 20px;
+    }
+    .settings-section h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--foreground);
+      margin-bottom: 8px;
+    }
+    .settings-hint {
+      font-size: 13px;
+      color: var(--foreground-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .settings-section p {
+      font-size: 14px;
+      color: var(--foreground-muted);
+      margin-bottom: 12px;
+    }
+    .settings-section p span {
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+    .code-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-align: center;
+      padding: 18px;
+      background: var(--surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius);
+      color: var(--cyan);
+      text-shadow: 0 0 12px var(--cyan-glow);
+      margin-bottom: 14px;
+      user-select: all;
+    }
+    .form-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .form-row input {
+      flex: 1;
+      padding: 12px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--foreground);
+      outline: none;
+      transition: var(--transition);
+    }
+    .form-row input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+    .form-row input::placeholder {
+      color: var(--foreground-dim);
+      text-transform: none;
+      letter-spacing: 0.5px;
+      font-weight: 400;
+    }
+    .form-row button {
+      flex-shrink: 0;
+      width: auto !important;
+      padding: 12px 20px;
+      font-size: 14px;
+      min-height: 48px;
+    }
+    .settings-section .btn-secondary,
+    .settings-section .btn-danger {
+      width: 100%;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.10);
+      color: #FF9F8A;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:active { background: rgba(239, 68, 68, 0.18); transform: scale(0.98); }
+    .settings-footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--foreground-dim);
+      letter-spacing: 1px;
+      padding: 12px 0;
+    }
+
     /* ========== Quiz View ========== */
     .quiz-header {
       display: flex;
@@ -676,6 +849,15 @@
 
       <div class="divider-or"><span>OR</span></div>
 
+      <button id="btn-wrong" class="btn-wrong">
+        <span class="wrong-icon">🔥</span>
+        <div class="wrong-text">
+          <div class="wrong-title">错题训练</div>
+          <div class="wrong-desc">已记录 <span id="wrong-count">0</span> 道错题</div>
+        </div>
+        <span class="wrong-arrow">→</span>
+      </button>
+
       <button id="btn-exam" class="btn-exam">
         <span class="exam-icon">📋</span>
         <div class="exam-text">
@@ -686,6 +868,8 @@
       </button>
 
       <p class="hint">// 每轮随机洗牌 · 答完看正确率</p>
+
+      <button id="btn-settings" class="btn-text-link">⚙ 设置</button>
       <p class="signature">
         <span class="author">钱小虾</span><span class="sep">·</span>build by <span class="author">OpenClaw</span>
       </p>
@@ -713,6 +897,39 @@
       <div class="quiz-footer">
         <div id="feedback" class="feedback hidden"></div>
         <button id="btn-submit" class="btn-primary" disabled>提交答案</button>
+      </div>
+    </main>
+
+    <!-- ========== Settings View ========== -->
+    <main id="view-settings" class="view hidden">
+      <header class="quiz-header">
+        <button class="btn-back" id="btn-back-from-settings">← 返回</button>
+        <div class="progress-text">设置</div>
+      </header>
+
+      <div class="settings-content">
+        <div class="settings-section">
+          <h3>🌐 跨设备同步</h3>
+          <p class="settings-hint">在不同设备输入同一个绑定码，自动同步错题本</p>
+          <div class="code-display" id="code-display">----</div>
+          <button class="btn-secondary" id="btn-copy-code">📋 复制绑定码</button>
+
+          <div class="form-row">
+            <input type="text" id="input-new-code" placeholder="输入新绑定码" maxlength="8" autocomplete="off">
+            <button class="btn-primary" id="btn-switch-code">切换</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>📚 错题本管理</h3>
+          <p>当前 <span id="settings-wrong-count">0</span> 道错题</p>
+          <button class="btn-secondary" id="btn-export">⬇ 导出 JSON 备份</button>
+          <button class="btn-secondary" id="btn-import">⬆ 导入 JSON 备份</button>
+          <input type="file" id="file-import" accept=".json" style="display:none">
+          <button class="btn-danger" id="btn-clear-wrong">清空错题本</button>
+        </div>
+
+        <p class="settings-footer">钱小虾 · build by OpenClaw</p>
       </div>
     </main>
 
@@ -753,11 +970,18 @@
 
     // ====== State ======
     const EXAM_CONFIG = { singleCount: 60, multiCount: 40, total: 100 };
+    const API_BASE = '';  // 同源，Pages Functions
+    const WRONG_STORAGE_KEY = 'shuati-wrong-v1';
+    const CODE_STORAGE_KEY = 'shuati-cloud-code';
+    const PUSH_DEBOUNCE_MS = 1500;
 
     const state = {
-      mode: 'single',          // 'single' | 'multi' | 'exam'
+      mode: 'single',          // 'single' | 'multi' | 'exam' | 'wrong'
       order: [],               // 练习模式题目 id 数组
       examPool: [],            // 考试模式题目池 [{id, type}]
+      wrongOrder: [],          // 错题训练模式 key 数组
+      wrongQuestions: {},      // 错题本 { '1:single': {...} }
+      cloudCode: null,         // 云端绑定码
       current: 0,              // 当前题目索引
       results: [],             // 每题结果 {selected, correct, correctAns, type}
       locked: false,           // 当前题是否已提交锁定
@@ -794,11 +1018,19 @@
         const pool = item.type === 'single' ? BANK.single : BANK.multi;
         return pool.find(q => q.id === item.id);
       }
+      if (state.mode === 'wrong') {
+        const key = state.wrongOrder[idx];
+        return state.wrongQuestions[key] || null;
+      }
       return getPool().find(q => q.id === state.order[idx]);
     }
     function getCurrentQType() {
       if (state.mode === 'exam') {
         return state.examPool[state.current]?.type || 'single';
+      }
+      if (state.mode === 'wrong') {
+        const key = state.wrongOrder[state.current];
+        return key ? key.split(':')[1] : 'single';
       }
       return state.mode;
     }
@@ -811,13 +1043,199 @@
       ];
       return shuffle(pool);  // 整体再洗一次
     }
+
+    // ====== Wrong Questions (错题本) ======
+    function wrongKey(q) { return `${q.id}:${q.type}`; }
+
+    function loadWrongFromLocal() {
+      try {
+        const raw = localStorage.getItem(WRONG_STORAGE_KEY);
+        if (raw) state.wrongQuestions = JSON.parse(raw);
+      } catch (e) {
+        state.wrongQuestions = {};
+      }
+    }
+    function saveWrongToLocal() {
+      try {
+        localStorage.setItem(WRONG_STORAGE_KEY, JSON.stringify(state.wrongQuestions));
+      } catch (e) {
+        console.warn('localStorage save failed:', e);
+      }
+    }
+
+    function recordWrong(q, userAnswer) {
+      const key = wrongKey(q);
+      const existing = state.wrongQuestions[key];
+      const now = Date.now();
+      const history = (existing?.history || []).concat([{ userAnswer, at: now }]).slice(-5);
+      state.wrongQuestions[key] = {
+        id: q.id, type: q.type, q: q.q, opts: q.opts, ans: q.ans,
+        wrongCount: (existing?.wrongCount || 0) + 1,
+        lastWrongAt: now,
+        history,
+      };
+      saveWrongToLocal();
+      updateWrongCount();
+      scheduleCloudPush();
+    }
+
+    function markMastered(q) {
+      const key = wrongKey(q);
+      delete state.wrongQuestions[key];
+      saveWrongToLocal();
+      updateWrongCount();
+      scheduleCloudPush();
+    }
+
+    function getWrongCount() {
+      return Object.keys(state.wrongQuestions).length;
+    }
+    function updateWrongCount() {
+      const n = getWrongCount();
+      const el = $('wrong-count');
+      if (el) el.textContent = n;
+      const el2 = $('settings-wrong-count');
+      if (el2) el2.textContent = n;
+    }
+
+    // ====== Cloud Sync ======
+    async function initCloudCode() {
+      let code = localStorage.getItem(CODE_STORAGE_KEY);
+      if (!code) {
+        try {
+          const resp = await fetch(API_BASE + '/api/init', { method: 'POST' });
+          const data = await resp.json();
+          if (data.code) {
+            code = data.code;
+            localStorage.setItem(CODE_STORAGE_KEY, code);
+          }
+        } catch (e) {
+          console.warn('init cloud code failed:', e);
+          return;
+        }
+      }
+      state.cloudCode = code;
+      await pullFromCloud();
+      updateCodeDisplay();
+    }
+
+    function updateCodeDisplay() {
+      const el = $('code-display');
+      if (el) el.textContent = state.cloudCode || '----';
+    }
+
+    async function pullFromCloud() {
+      if (!state.cloudCode) return;
+      try {
+        const resp = await fetch(`${API_BASE}/api/wrong?code=${state.cloudCode}`);
+        const data = await resp.json();
+        if (data.questions) {
+          // 合并：按 key，wrongCount 取 max
+          for (const [k, v] of Object.entries(data.questions)) {
+            const ex = state.wrongQuestions[k];
+            if (!ex || (v.wrongCount || 0) > (ex.wrongCount || 0)) {
+              state.wrongQuestions[k] = v;
+            }
+          }
+          saveWrongToLocal();
+          updateWrongCount();
+        }
+      } catch (e) {
+        console.warn('pull from cloud failed:', e);
+      }
+    }
+
+    let pushTimer = null;
+    function scheduleCloudPush() {
+      if (!state.cloudCode) return;
+      clearTimeout(pushTimer);
+      pushTimer = setTimeout(pushToCloud, PUSH_DEBOUNCE_MS);
+    }
+    async function pushToCloud() {
+      if (!state.cloudCode) return;
+      try {
+        await fetch(`${API_BASE}/api/wrong?code=${state.cloudCode}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            questions: state.wrongQuestions,
+            stats: { totalWrong: getWrongCount(), lastUpdatedAt: Date.now() },
+          }),
+        });
+      } catch (e) {
+        console.warn('push to cloud failed:', e);
+      }
+    }
+
+    async function switchCloudCode(newCode) {
+      if (!newCode || !/^[A-HJ-NP-Z2-9]{8}$/.test(newCode)) {
+        alert('绑定码格式错误（8 位大写字母数字，不含 0/O/1/I/L）');
+        return false;
+      }
+      state.cloudCode = newCode;
+      localStorage.setItem(CODE_STORAGE_KEY, newCode);
+      await pullFromCloud();
+      updateCodeDisplay();
+      return true;
+    }
+
+    function exportWrong() {
+      const data = {
+        questions: state.wrongQuestions,
+        exportedAt: new Date().toISOString(),
+        version: 1,
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `shuati-wrong-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importWrong(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.questions) throw new Error('格式错误');
+          for (const [k, v] of Object.entries(data.questions)) {
+            const ex = state.wrongQuestions[k];
+            if (!ex || (v.wrongCount || 0) > (ex.wrongCount || 0)) {
+              state.wrongQuestions[k] = v;
+            }
+          }
+          saveWrongToLocal();
+          updateWrongCount();
+          scheduleCloudPush();
+          alert(`导入成功，当前共 ${getWrongCount()} 道错题`);
+        } catch (err) {
+          alert('导入失败：' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function clearWrong() {
+      if (!confirm(`确定清空全部 ${getWrongCount()} 道错题？\n（清空后云端也会同步删除）`)) return;
+      state.wrongQuestions = {};
+      saveWrongToLocal();
+      updateWrongCount();
+      // 同步到云端
+      if (state.cloudCode) {
+        fetch(`${API_BASE}/api/wrong?code=${state.cloudCode}`, { method: 'DELETE' });
+      }
+    }
     function getTotal() {
-      return state.mode === 'exam' ? state.examPool.length : state.order.length;
+      if (state.mode === 'exam') return state.examPool.length;
+      if (state.mode === 'wrong') return state.wrongOrder.length;
+      return state.order.length;
     }
 
     // ====== View Switching ======
     function showView(name) {
-      ['home', 'quiz', 'result'].forEach(v => {
+      ['home', 'quiz', 'result', 'settings'].forEach(v => {
         $(`view-${v}`).classList.toggle('hidden', v !== name);
       });
     }
@@ -826,6 +1244,7 @@
     function initHome() {
       $('count-single').textContent = BANK.meta.singleCount;
       $('count-multi').textContent = BANK.meta.multiCount;
+      updateWrongCount();
 
       $('mode-tabs').addEventListener('click', (e) => {
         const tab = e.target.closest('.tab');
@@ -837,6 +1256,12 @@
 
       $('btn-start').addEventListener('click', startQuiz);
       $('btn-exam').addEventListener('click', startExam);
+      $('btn-wrong').addEventListener('click', startWrongTraining);
+      $('btn-settings').addEventListener('click', () => {
+        updateCodeDisplay();
+        updateWrongCount();
+        showView('settings');
+      });
     }
 
     // ====== Quiz View ======
@@ -844,6 +1269,7 @@
       const pool = getPool();
       state.order = shuffle(pool.map(q => q.id));
       state.examPool = [];
+      state.wrongOrder = [];
       state.current = 0;
       state.results = new Array(state.order.length).fill(null);
       state.locked = false;
@@ -861,6 +1287,7 @@
     function startExam() {
       state.mode = 'exam';
       state.order = [];
+      state.wrongOrder = [];
       state.examPool = buildExamPool();
       state.current = 0;
       state.results = new Array(state.examPool.length).fill(null);
@@ -869,6 +1296,29 @@
 
       $('progress-total').textContent = state.examPool.length;
       $('q-type').textContent = '考试模式';
+      $('q-type').classList.remove('multi');
+
+      showView('quiz');
+      renderQuestion();
+    }
+
+    function startWrongTraining() {
+      const keys = Object.keys(state.wrongQuestions);
+      if (keys.length === 0) {
+        alert('还没有错题，先去刷几题吧');
+        return;
+      }
+      state.mode = 'wrong';
+      state.order = [];
+      state.examPool = [];
+      state.wrongOrder = shuffle(keys);
+      state.current = 0;
+      state.results = new Array(state.wrongOrder.length).fill(null);
+      state.locked = false;
+      state.currentSelected = new Set();
+
+      $('progress-total').textContent = state.wrongOrder.length;
+      $('q-type').textContent = '错题训练';
       $('q-type').classList.remove('multi');
 
       showView('quiz');
@@ -963,6 +1413,13 @@
         type: getCurrentQType(),
       };
       state.locked = true;
+
+      // 错题本：答错入本 / 错题训练答对移除
+      if (isCorrect) {
+        if (state.mode === 'wrong') markMastered(q);
+      } else {
+        recordWrong(q, selected);
+      }
 
       // 视觉反馈：标对错 + 锁定
       document.querySelectorAll('.option').forEach(o => {
@@ -1106,17 +1563,59 @@
     function initResult() {
       $('btn-home').addEventListener('click', () => {
         showView('home');
+        updateWrongCount();
       });
       $('btn-restart').addEventListener('click', () => {
         startQuiz();
       });
     }
 
+    // ====== Settings View ======
+    function initSettings() {
+      $('btn-back-from-settings').addEventListener('click', () => {
+        showView('home');
+      });
+      $('btn-copy-code').addEventListener('click', async () => {
+        if (!state.cloudCode) return;
+        try {
+          await navigator.clipboard.writeText(state.cloudCode);
+          const orig = $('btn-copy-code').textContent;
+          $('btn-copy-code').textContent = '✓ 已复制';
+          setTimeout(() => { $('btn-copy-code').textContent = orig; }, 1500);
+        } catch (e) {
+          // fallback
+          prompt('复制这个绑定码到剪贴板：', state.cloudCode);
+        }
+      });
+      $('btn-switch-code').addEventListener('click', async () => {
+        const newCode = $('input-new-code').value.trim().toUpperCase();
+        const ok = await switchCloudCode(newCode);
+        if (ok) {
+          $('input-new-code').value = '';
+          alert('已切换到新绑定码');
+        }
+      });
+      $('btn-export').addEventListener('click', exportWrong);
+      $('btn-import').addEventListener('click', () => {
+        $('file-import').click();
+      });
+      $('file-import').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) importWrong(file);
+        e.target.value = '';  // reset
+      });
+      $('btn-clear-wrong').addEventListener('click', clearWrong);
+    }
+
     // ====== Boot ======
     document.addEventListener('DOMContentLoaded', () => {
+      loadWrongFromLocal();
       initHome();
       initQuiz();
       initResult();
+      initSettings();
+      // 异步初始化云端绑定码（拉云端错题本合并）
+      initCloudCode();
     });
   </script>
 </body>
