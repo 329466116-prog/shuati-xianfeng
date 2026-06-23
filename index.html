@@ -175,23 +175,23 @@
 
     .mode-tabs {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
     }
     .tab {
-      padding: 18px 16px;
+      padding: 16px 8px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       color: var(--foreground-muted);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 500;
       transition: var(--transition);
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
     }
     .tab .count {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--foreground-dim);
       transition: var(--transition);
@@ -203,7 +203,55 @@
       box-shadow: 0 0 0 1px var(--accent), 0 4px 16px var(--accent-glow);
     }
     .tab.active .count { color: var(--cyan); }
+    .tab[data-mode="judge"].active {
+      border-color: #10B981;
+      box-shadow: 0 0 0 1px #10B981, 0 4px 16px rgba(16, 185, 129, 0.25);
+    }
+    .tab[data-mode="judge"].active .count { color: #6EE7B7; }
     .tab:active { transform: scale(0.97); }
+
+    /* ========== Bank Select ========== */
+    .bank-select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .bank-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--foreground-dim);
+      padding-left: 4px;
+    }
+    .select-bank {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: 'Noto Sans SC', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--foreground);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: var(--transition);
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238A8F98' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+    .select-bank:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+    .select-bank option {
+      background: var(--bg-elevated);
+      color: var(--foreground);
+      padding: 8px;
+    }
 
     /* ========== Buttons ========== */
     .btn-primary, .btn-secondary {
@@ -588,6 +636,7 @@
       margin-bottom: 16px;
     }
     .q-type.multi { color: #FF9F43; background: rgba(255, 159, 67, 0.08); border-color: rgba(255, 159, 67, 0.2); }
+    .q-type.judge { color: #6EE7B7; background: rgba(16, 185, 129, 0.10); border-color: rgba(16, 185, 129, 0.3); }
     .q-text {
       font-size: 17px;
       font-weight: 500;
@@ -638,6 +687,46 @@
       padding-top: 3px;
       word-wrap: break-word;
     }
+
+    /* ========== Judge Option (判断题 2 大按钮) ========== */
+    .option-judge {
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 18px 16px;
+      min-height: 70px;
+    }
+    .option-judge .judge-icon {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--foreground-muted);
+      transition: var(--transition);
+    }
+    .option-judge .text {
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      padding-top: 0;
+    }
+    .option-judge.selected {
+      background: var(--surface-active);
+      border-color: var(--accent);
+    }
+    .option-judge.selected .judge-icon { color: var(--accent-strong); }
+    .option-judge.correct {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: var(--success);
+      box-shadow: 0 0 0 1px var(--success), 0 4px 16px var(--success-glow);
+    }
+    .option-judge.correct .judge-icon { color: #10B981; }
+    .option-judge.wrong {
+      background: rgba(239, 68, 68, 0.10);
+      border-color: var(--error);
+      box-shadow: 0 0 0 1px var(--error), 0 4px 12px var(--error-glow);
+    }
+    .option-judge.wrong .judge-icon { color: #EF4444; }
+    .option-judge.dimmed { opacity: 0.4; }
 
     /* 选中态 */
     .option.selected {
@@ -831,17 +920,26 @@
       <div class="brand">
         <div class="logo">⚡</div>
         <h1>刷题先锋</h1>
-        <p class="version">v1.0 · DARK · TECH</p>
+        <p class="version">v4.0 · DARK · TECH</p>
+      </div>
+
+      <div class="bank-select-wrap">
+        <label class="bank-label">题库</label>
+        <select id="select-bank" class="select-bank"></select>
       </div>
 
       <div class="mode-tabs" id="mode-tabs">
         <button class="tab active" data-mode="single">
-          <span>单选题</span>
+          <span>单选</span>
           <span class="count" id="count-single">350</span>
         </button>
         <button class="tab" data-mode="multi">
-          <span>多选题</span>
+          <span>多选</span>
           <span class="count" id="count-multi">350</span>
+        </button>
+        <button class="tab" data-mode="judge">
+          <span>判断</span>
+          <span class="count" id="count-judge">0</span>
         </button>
       </div>
 
@@ -975,8 +1073,17 @@
     const CODE_STORAGE_KEY = 'shuati-cloud-code';
     const PUSH_DEBOUNCE_MS = 1500;
 
+    // 多题库支持
+    const BANKS_DATA = window.QUESTION_BANKS;
+    if (!BANKS_DATA || !BANKS_DATA.banks) {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#EF4444;font-family:monospace;">⚠ 题库加载失败，请检查 questions.js 是否就位</div>';
+      throw new Error('QUESTION_BANKS missing');
+    }
+    const BANKS = BANKS_DATA.banks;  // { code: { name, single, multi, judge } }
+
     const state = {
-      mode: 'single',          // 'single' | 'multi' | 'exam' | 'wrong'
+      currentBank: BANKS_DATA.current,  // 当前题库 code
+      mode: 'single',          // 'single' | 'multi' | 'judge' | 'exam' | 'wrong'
       order: [],               // 练习模式题目 id 数组
       examPool: [],            // 考试模式题目池 [{id, type}]
       wrongOrder: [],          // 错题训练模式 key 数组
@@ -987,12 +1094,6 @@
       locked: false,           // 当前题是否已提交锁定
       currentSelected: new Set(),
     };
-
-    const BANK = window.QUESTION_BANK;
-    if (!BANK) {
-      document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#EF4444;font-family:monospace;">⚠ 题库加载失败，请检查 questions.js 是否就位</div>';
-      throw new Error('QUESTION_BANK missing');
-    }
 
     const KEYS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -1009,13 +1110,19 @@
     const fmt2 = (n) => String(n).padStart(2, '0');
 
     function getPool() {
-      return state.mode === 'single' ? BANK.single : BANK.multi;
+      const bank = BANKS[state.currentBank] || { single: [], multi: [], judge: [] };
+      if (state.mode === 'judge') return bank.judge;
+      if (state.mode === 'multi') return bank.multi;
+      return bank.single;
     }
     function getQuestion(idx) {
       if (state.mode === 'exam') {
         const item = state.examPool[idx];
         if (!item) return null;
-        const pool = item.type === 'single' ? BANK.single : BANK.multi;
+        const bank = BANKS[state.currentBank];
+        const pool = item.type === 'judge' ? bank.judge
+                   : item.type === 'multi' ? bank.multi
+                   : bank.single;
         return pool.find(q => q.id === item.id);
       }
       if (state.mode === 'wrong') {
@@ -1032,15 +1139,25 @@
         const key = state.wrongOrder[state.current];
         return key ? key.split(':')[1] : 'single';
       }
-      return state.mode;
+      return state.mode;  // 'single' | 'multi' | 'judge'
     }
     function buildExamPool() {
-      const singleIds = shuffle(BANK.single.map(q => q.id)).slice(0, EXAM_CONFIG.singleCount);
-      const multiIds = shuffle(BANK.multi.map(q => q.id)).slice(0, EXAM_CONFIG.multiCount);
-      const pool = [
-        ...singleIds.map(id => ({ id, type: 'single' })),
-        ...multiIds.map(id => ({ id, type: 'multi' })),
-      ];
+      const bank = BANKS[state.currentBank];
+      const pool = [];
+      if (bank.single.length) {
+        const ids = shuffle(bank.single.map(q => q.id)).slice(0, EXAM_CONFIG.singleCount);
+        ids.forEach(id => pool.push({ id, type: 'single' }));
+      }
+      if (bank.multi.length) {
+        const ids = shuffle(bank.multi.map(q => q.id)).slice(0, EXAM_CONFIG.multiCount);
+        ids.forEach(id => pool.push({ id, type: 'multi' }));
+      }
+      // 判断题也加进去（最多 20 道）
+      if (bank.judge && bank.judge.length) {
+        const judgeCount = Math.min(20, bank.judge.length);
+        const ids = shuffle(bank.judge.map(q => q.id)).slice(0, judgeCount);
+        ids.forEach(id => pool.push({ id, type: 'judge' }));
+      }
       return shuffle(pool);  // 整体再洗一次
     }
 
@@ -1242,9 +1359,13 @@
 
     // ====== Home View ======
     function initHome() {
-      $('count-single').textContent = BANK.meta.singleCount;
-      $('count-multi').textContent = BANK.meta.multiCount;
+      refreshBankSelect();
+      refreshTypeCounts();
       updateWrongCount();
+
+      $('select-bank').addEventListener('change', (e) => {
+        switchBank(e.target.value);
+      });
 
       $('mode-tabs').addEventListener('click', (e) => {
         const tab = e.target.closest('.tab');
@@ -1254,7 +1375,17 @@
         state.mode = tab.dataset.mode;
       });
 
-      $('btn-start').addEventListener('click', startQuiz);
+      $('btn-start').addEventListener('click', () => {
+        const bank = BANKS[state.currentBank];
+        const hasQ = state.mode === 'judge' ? (bank.judge && bank.judge.length > 0)
+                   : state.mode === 'multi' ? bank.multi.length > 0
+                   : bank.single.length > 0;
+        if (!hasQ) {
+          alert('当前题库没有 ' + (state.mode === 'judge' ? '判断' : state.mode === 'multi' ? '多选' : '单选') + ' 题');
+          return;
+        }
+        startQuiz();
+      });
       $('btn-exam').addEventListener('click', startExam);
       $('btn-wrong').addEventListener('click', startWrongTraining);
       $('btn-settings').addEventListener('click', () => {
@@ -1262,6 +1393,31 @@
         updateWrongCount();
         showView('settings');
       });
+    }
+
+    function refreshBankSelect() {
+      const sel = $('select-bank');
+      sel.innerHTML = '';
+      Object.entries(BANKS).forEach(([code, bank]) => {
+        const opt = document.createElement('option');
+        opt.value = code;
+        opt.textContent = bank.name;
+        if (code === state.currentBank) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function refreshTypeCounts() {
+      const bank = BANKS[state.currentBank] || { single: [], multi: [], judge: [] };
+      $('count-single').textContent = bank.single.length;
+      $('count-multi').textContent = bank.multi.length;
+      $('count-judge').textContent = (bank.judge || []).length;
+    }
+
+    function switchBank(code) {
+      if (!BANKS[code]) return;
+      state.currentBank = code;
+      refreshTypeCounts();
     }
 
     // ====== Quiz View ======
@@ -1277,8 +1433,8 @@
 
       $('progress-total').textContent = state.order.length;
       const qType = getCurrentQType();
-      $('q-type').textContent = qType === 'single' ? '单选题' : '多选题';
-      $('q-type').classList.toggle('multi', qType === 'multi');
+      $('q-type').textContent = qType === 'judge' ? '判断题' : qType === 'multi' ? '多选题' : '单选题';
+      $('q-type').className = 'q-type ' + qType;
 
       showView('quiz');
       renderQuestion();
@@ -1343,19 +1499,24 @@
 
       // 题目类型标签（exam 模式下每题类型独立）
       const qType = getCurrentQType();
-      $('q-type').textContent = qType === 'single' ? '单选题' : '多选题';
-      $('q-type').classList.toggle('multi', qType === 'multi');
+      $('q-type').textContent = qType === 'judge' ? '判断题' : qType === 'multi' ? '多选题' : '单选题';
+      $('q-type').className = 'q-type ' + qType;
 
       const optsEl = $('options');
       optsEl.innerHTML = '';
+      const isJudge = qType === 'judge';
+
       q.opts.forEach((text, i) => {
         const btn = document.createElement('button');
-        btn.className = 'option';
+        btn.className = 'option' + (isJudge ? ' option-judge' : '');
         btn.dataset.key = KEYS[i];
-        btn.innerHTML = `
-          <span class="key">${KEYS[i]}</span>
-          <span class="text">${escapeHtml(text)}</span>
-        `;
+        if (isJudge) {
+          // 判断题：图标 + 文字，无字母徽章
+          const icon = i === 0 ? '✓' : '✗';
+          btn.innerHTML = `<span class="judge-icon">${icon}</span><span class="text">${escapeHtml(text)}</span>`;
+        } else {
+          btn.innerHTML = `<span class="key">${KEYS[i]}</span><span class="text">${escapeHtml(text)}</span>`;
+        }
         btn.addEventListener('click', () => onOptionClick(KEYS[i], btn));
         optsEl.appendChild(btn);
       });
@@ -1376,12 +1537,7 @@
     function onOptionClick(key, btn) {
       if (state.locked) return;
       const qType = getCurrentQType();
-      if (qType === 'single') {
-        // 单选：清空其他选中
-        state.currentSelected = new Set([key]);
-        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-        btn.classList.add('selected');
-      } else {
+      if (qType === 'multi') {
         // 多选：toggle
         if (state.currentSelected.has(key)) {
           state.currentSelected.delete(key);
@@ -1390,6 +1546,11 @@
           state.currentSelected.add(key);
           btn.classList.add('selected');
         }
+      } else {
+        // single + judge 共用：单选行为，清空其他选中
+        state.currentSelected = new Set([key]);
+        document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        btn.classList.add('selected');
       }
       $('btn-submit').disabled = state.currentSelected.size === 0;
     }
