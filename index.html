@@ -641,9 +641,32 @@
       font-size: 17px;
       font-weight: 500;
       line-height: 1.65;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
       color: var(--foreground);
       word-wrap: break-word;
+    }
+
+    .q-img-wrap {
+      margin-bottom: 20px;
+      display: none;
+    }
+    .q-img-wrap.has-img {
+      display: flex;
+      justify-content: center;
+    }
+    .q-img-wrap img {
+      max-width: 100%;
+      max-height: 280px;
+      width: auto;
+      height: auto;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      object-fit: contain;
+      display: block;
+    }
+    .q-img-wrap img.error {
+      display: none;
     }
 
     .options {
@@ -989,6 +1012,7 @@
       <article class="question-card" id="question-card">
         <span class="q-type" id="q-type">单选题</span>
         <h2 class="q-text" id="q-text"></h2>
+        <div class="q-img-wrap" id="q-img-wrap"></div>
         <div class="options" id="options"></div>
       </article>
 
@@ -1493,6 +1517,15 @@
       $('progress-fill').style.width = `${(state.current / total) * 100}%`;
 
       $('q-text').textContent = q.q;
+      // 题目配图（如果有 qImg 字段）
+      const imgWrap = $('q-img-wrap');
+      if (q.qImg) {
+        imgWrap.innerHTML = `<img src="${escapeHtml(q.qImg)}" alt="题目配图" loading="lazy" onerror="this.classList.add('error'); console.warn('[qImg] 加载失败:', this.src);">`;
+        imgWrap.classList.add('has-img');
+      } else {
+        imgWrap.innerHTML = '';
+        imgWrap.classList.remove('has-img');
+      }
       $('btn-submit').disabled = true;
       $('btn-submit').textContent = '提交答案';
       hideFeedback();
