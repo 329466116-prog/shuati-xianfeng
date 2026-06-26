@@ -77,6 +77,9 @@
     #lights canvas { display: block; width: 100% !important; height: 100% !important; }
     /* WebGL 不可用时隐藏 lights 容器，只保留 .bg-blobs 作为 fallback */
     body.no-webgl #lights { display: none; }
+    /* 2026-06-26 多多要求：动效背景只在首页显示，做题/结果/设置页隐藏
+       （避免分散做题注意力）。showView() 切换 .lights-hidden class。 */
+    #lights.lights-hidden { display: none !important; }
     .blob {
       position: absolute;
       border-radius: 50%;
@@ -1396,6 +1399,9 @@
       ['home', 'quiz', 'result', 'settings'].forEach(v => {
         $(`view-${v}`).classList.toggle('hidden', v !== name);
       });
+      // 2026-06-26 多多要求：Hyperspeed 动效背景只在首页显示，做题/结果/设置页隐藏
+      const lights = document.getElementById('lights');
+      if (lights) lights.classList.toggle('lights-hidden', name !== 'home');
     }
 
     // ====== Home View ======
