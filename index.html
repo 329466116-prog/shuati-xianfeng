@@ -8,6 +8,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "postprocessing": "https://unpkg.com/postprocessing@6.34.2/build/index.js"
+    }
+  }
+  </script>
   <style>
     /* ========== Design Tokens ========== */
     :root {
@@ -64,6 +72,11 @@
       z-index: -2;
     }
     .bg-blobs { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    /* Hyperspeed WebGL 背景容器（刷题先锋页面动效）— 2026-06-26 多多要求 */
+    #lights { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+    #lights canvas { display: block; width: 100% !important; height: 100% !important; }
+    /* WebGL 不可用时隐藏 lights 容器，只保留 .bg-blobs 作为 fallback */
+    body.no-webgl #lights { display: none; }
     .blob {
       position: absolute;
       border-radius: 50%;
@@ -107,6 +120,8 @@
 
     /* ========== Layout ========== */
     .app {
+      position: relative;
+      z-index: 0;
       max-width: 520px;
       margin: 0 auto;
       min-height: 100vh;
@@ -931,6 +946,8 @@
   </style>
 </head>
 <body>
+  <!-- Hyperspeed WebGL 背景（Three.js + Postprocessing）。WebGL 不可用时自动隐藏，回退到 .bg-blobs。 -->
+  <div id="lights"></div>
   <div class="bg-blobs">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
@@ -1812,5 +1829,8 @@
       initCloudCode();
     });
   </script>
+
+  <!-- Hyperspeed WebGL 背景（Three.js + Postprocessing） -->
+  <script type="module" src="hyperspeed-bg.js"></script>
 </body>
 </html>
