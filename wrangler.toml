@@ -1,4 +1,5 @@
 name = "shuati-xianfeng"
+pages_build_output_dir = "."
 compatibility_date = "2024-09-23"
 
 # KV namespace binding（需要在 Cloudflare Dashboard 同步配 Pages 项目）
@@ -6,10 +7,11 @@ compatibility_date = "2024-09-23"
 # Variable name: SHUATI_WRONG_KV
 # KV namespace: SHUATI_WRONG_KV
 #
-# 注意：2026-06-26 删除 pages_build_output_dir = "/"
-# CF Pages v2 root directory strategy 把它当作相对路径 "../../.."
-# 然后跑 npm run build，但我们是纯静态项目没 package.json → build 失败
-# CF Pages 默认从仓库根部署静态文件，不需要这个字段
+# 注意：2026-06-26 pages_build_output_dir 设为 "." （仓库根）
+# CF Pages v2 root directory strategy 会认为仓库根 = build output，
+# 因为没有 build_command，跳过 npm build，直接部署仓库根的静态文件。
+# 之前 "/" 被解析为相对路径 "../../.." 触发 npm build → 失败。
+# 完全不写 pages_build_output_dir 会让 wrangler.toml 被跳过 → 默认找 dist/ → 失败。
 [[kv_namespaces]]
 binding = "SHUATI_WRONG_KV"
 id = "a9182e7bf3cc446884987a078b80e76b"
